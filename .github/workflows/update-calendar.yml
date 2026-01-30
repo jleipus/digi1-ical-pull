@@ -1,0 +1,54 @@
+name: Update Calendar
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Every day at 06:00
+
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "generate_calendar.py"
+      - ".github/workflows/update-calendar.yml"
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate calendar
+        env:
+          DIGI1_USER_EMAIL: ${{ secrets.DIGI1_USER_EMAIL }}
+          DIGI1_USER_PASSWORD: ${{ secrets.DIGI1_USER_PASSWORD }}
+          PATH_SECRET: ${{ secrets.PATH_SECRET }}
+        run: python generate_calendar.py
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
