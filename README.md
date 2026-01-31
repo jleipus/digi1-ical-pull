@@ -45,7 +45,7 @@ Google will periodically refresh the calendar (usually every 12-24 hours).
 
 ## Schedule
 
-The calendar updates automatically every day at 6:00 AM UTC. You can:
+The calendar updates automatically twice every day at 00:00 and 12:00 UTC. You can:
 
 - Change the schedule in `.github/workflows/update-calendar.yml`
 - Manually trigger an update from the **Actions** tab
